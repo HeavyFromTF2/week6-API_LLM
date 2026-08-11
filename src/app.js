@@ -9,6 +9,7 @@ const fs = require('fs');
 const taskRoutes = require('./routes/taskRoutes');
 const authRoutes = require('./routes/authRoutes');
 const protectedRoutes = require('./routes/protectedRoutes'); 
+const llmRoutes = require('./routes/llmRoutes');
 
 const app = express();
 
@@ -33,5 +34,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/protected', protectedRoutes);
 app.use('/tasks', taskRoutes);
+app.use('/llm', llmRoutes);
+
 
 module.exports = app;
