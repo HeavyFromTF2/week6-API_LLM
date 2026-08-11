@@ -1,6 +1,7 @@
 services:
   api:
     build: .
+    command: node --watch index.js
     ports:
       - "3000:3000"
     volumes:
