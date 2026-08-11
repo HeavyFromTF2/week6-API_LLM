@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "input": { "text": "I need to pay my monthly credit card bill and adjust invoice details." },
+    "expected": { "category": "finance", "priority": "medium" }
+  },
+  {
+    "id": 2,
+    "input": { "text": "Fix severe application server crash on save task button." },
+    "expected": { "category": "work", "priority": "high" }
+  },
+  {
+    "id": 3,
+    "input": { "text": "Research dark mode design options for the web app UI." },
+    "expected": { "category": "work", "priority": "low" }
+  },
+  {
+    "id": 4,
+    "input": { "text": "Hello, good morning! How are you?" },
+    "expected": { "category": "other", "priority": "low" }
+  },
+  {
+    "id": 5,
+    "input": { "text": "Need to reset my password for account login access immediately." },
+    "expected": { "category": "work", "priority": "high" }
+  },
+  {
+    "id": 6,
+    "input": { "text": "Buy groceries for home dinner tonight." },
+    "expected": { "category": "home", "priority": "medium" }
+  },
+  {
+    "id": 7,
+    "input": { "text": "Go to the gym for 45 minutes workout session." },
+    "expected": { "category": "health", "priority": "medium" }
+  },
+  {
+    "id": 8,
+    "input": { "text": "Study Node.js and TypeScript integration patterns." },
+    "expected": { "category": "learning", "priority": "low" }
+  }
+]

@@ -1,128 +1,104 @@
-# 🚀 Todo List API - FlyRank Week 4
-
-Task management REST API built for the FlyRank Backend Internship.
+# 🚀 Todo List API - Task Triage Component - FlyRank Week 6
 
 ---
 
-# 🔒 Assignment A4 – Auth: Login & Protect
+# 🤖 Assignment A17 – LLM Behind the API
 
-This version integrates **Supabase Auth** as the Identity Provider to manage user authentication (Sign Up, Log In, Log Out) and uses a custom Express middleware to verify JSON Web Tokens (JWTs) and protect authenticated endpoints.
 
-## Environment Setup
+## Endpoint Overview
 
-Copy the example environment file before starting:
+This API endpoint takes a messy, unstructured text description of a task (like "Fix severe server crash on save task button") and uses an AI model to clean it up and classify it. It extracts a clear task title (`suggested_title`), assigns an urgency level (`priority`) and category from a strict list, estimates how many minutes it will take, and gives a confidence score explaining its reasoning—allowing your todo application to automatically organize tasks without human effort.
+
+## Quickstart & Sample cURL
 
 ```bash
-cp .env.example .env
+curl -X POST http://localhost:3000/llm/triage \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Fix severe application server crash on save task button."}'
 ```
 
-Configure your `.env` file:
+**Exact Response:**
+
+```json
+{
+  "suggested_title": "Fix server crash on save button",
+  "category": "work",
+  "priority": "high",
+  "estimated_minutes": 60,
+  "confidence": 0.85,
+  "reason": "Critical server crash requiring urgent investigation."
+}
+```
+
+## Job Card
+
+- **Task Description:** Process unstructured user task notes and output structured task metadata.
+- **Input:** `{"text": "string, 3-500 characters"}`
+
+- **Output:**
+  - `suggested_title` (string)
+  - `category` (enum: `work`, `personal`, `health`, `finance`, `learning`, `home`, `other`)
+  - `priority` (enum: `low`, `medium`, `high`)
+  - `estimated_minutes` (integer: `5` to `480`)
+  - `confidence` (float: `0.0` to `1.0`)
+  - `reason` (string)
+
+- **It Must Never:**
+  - Must NEVER invent a category outside the specified allowed list.
+  - Must NEVER return raw text, markdown blocks, or backticks in response bodies.
+  - Must NEVER crash or throw unhandled 500 errors on invalid model outputs.
+  - Must NEVER bypass schema validation before returning data to the client.
+  - Must NEVER leak secret API keys or environment variables in logs or responses.
+
+- **When Unsure:**
+  - Return category `"other"` with `priority: "low"` and `confidence` below `0.5`, rather than guessing.
+
+## Provider & Environment Configuration
+
+- **Provider:** OpenRouter
+- **Model:** `openrouter/free`
+
+### Three Environment Variables Needed to Swap Providers
 
 ```env
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_public_key
-PORT=3000
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=your_openrouter_api_key_here
+LLM_MODEL=openrouter/free
 ```
 
-> **Note:** Always use the public **anon** key, never the `service_role` key.
+## Evaluation Results
 
-## Run
+- **Execution Date:** 2026-08-11
+- **Prompt Version:** `v1` (`prompts/triage-v1.md`)
+- **Category Accuracy:** 87.5% (7/8)
+- **Exact Match Accuracy:** 37.5% (3/8)
 
-```bash
-npm install
-npm start
+## Cost Log & Daily Scale Estimate
+
+### Single Call Metrics Log
+
+```json
+{
+  "timestamp": "2026-08-11T20:44:00.000Z",
+  "event": "LLM_METRICS",
+  "prompt_version": "v1",
+  "model": "openrouter/free",
+  "prompt_tokens": 210,
+  "completion_tokens": 42,
+  "total_tokens": 252,
+  "duration_ms": 1120,
+  "repairs": 0
+}
 ```
 
-API: `http://localhost:3000`
+### Daily Scale Estimate
 
-Swagger: `http://localhost:3000/docs`
+For **10,000 requests/day**, at approximately 252 tokens per call:
 
-## Endpoints
+**~2.52 million tokens/day**
 
-### Public
+Estimated cost: **~$0.57/day** on standard `gpt-4o-mini` pricing.
 
-- `POST /auth/signup`
-- `POST /auth/login`
-- `GET /public/info`
+## What I'd Fix With Another Day
 
-### Protected (Bearer Token Required)
-
-- `POST /auth/logout`
-- `GET /protected/profile`
-- `GET /tasks`
-- `POST /tasks`
-
-## Authentication
-
-Protected endpoints require a valid **Bearer JWT**.
-
-### Using Swagger UI
-
-1. Call `POST /auth/login`.
-2. Copy the returned `access_token`.
-3. Click **Authorize** in Swagger UI.
-4. Paste **only** the JWT (do **not** include `Bearer`).
-5. Execute any protected endpoint.
-
-## Example Requests
-
-### Sign Up & Log In
-
-```bash
-# Register a new user
-curl -i -X POST http://localhost:3000/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-
-# Log in to receive the access token
-curl -i -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-```
-
-### Access Protected Endpoint
-
-```bash
-# Access protected profile with valid Bearer token (200 OK)
-curl -i http://localhost:3000/protected/profile \
-  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
-
-# Access protected profile with missing/invalid token (401 Unauthorized)
-curl -i http://localhost:3000/protected/profile \
-  -H "Authorization: Bearer invalid_or_tampered_token"
-```
-
-### Proof Images
-
-Supabase.com dashboard health status:
-<img width="1200" height="870" alt="supa functional" src="https://github.com/user-attachments/assets/8024631e-46c4-48f2-9f19-f340e1c29fc5" />
-
-Token being used to autenticate successfully:
-<img width="800" height="600" alt="Bearer1" src="https://github.com/user-attachments/assets/ca7e15e3-420c-47b4-9990-534053c1bfb5" />
-
-Fetch autenticated user private profile:
-<img width="1546" height="903" alt="image" src="https://github.com/user-attachments/assets/e16f87e5-629f-40b3-bdaf-135081a5343f" />
-
-Task being created after being logged in with a JWT:
-<img width="800" height="600" alt="Bearer3" src="https://github.com/user-attachments/assets/8cc8fdc9-addd-4559-bd3e-f5ea8bace3e1" />
-
-
-
-## Features
-
-- Supabase Auth integration
-- JWT verification middleware
-- Protected Express routes
-- OpenAPI / Swagger UI integration
-- Bearer token authentication
-- Correct HTTP status codes (`200`, `201`, `204`, `400`, `401`)
-
-## AI Usage
-
-AI was used as a learning, code-review, and debugging partner to better understand:
-
-- Supabase Auth SDK integration (`signUp`, `signInWithPassword`, `signOut`, `getUser`)
-- Extracting and verifying JWT Bearer tokens in Express middleware
-- Configuring OpenAPI Bearer security for Swagger UI
-- Structuring HTTP status codes correctly (`200`, `201`, `204`, `400`, `401`)
-- Creating this README
+Calibrate the task priority definitions in `prompts/triage-v1.md` with explicit negative examples to fix the AI's bias toward over-classifying tasks as `medium`/`high` priority.
