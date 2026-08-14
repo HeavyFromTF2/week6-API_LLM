@@ -1,0 +1,42 @@
+[
+  {
+    "id": "finance-urgent-bill",
+    "input": "pay doctor bill 50$ urgent",
+    "expect": { "category": "Finance", "priority": "high" }
+  },
+  {
+    "id": "shopping-groceries",
+    "input": "buy milk and eggs at the store",
+    "expect": { "category": "Shopping", "priority": "low" }
+  },
+  {
+    "id": "health-appointment-nextweek",
+    "input": "schedule dentist appointment next week",
+    "expect": { "category": "Health", "priority": "medium" }
+  },
+  {
+    "id": "work-report-tomorrow",
+    "input": "finish quarterly report for client meeting tomorrow",
+    "expect": { "category": "Work", "priority": "medium" }
+  },
+  {
+    "id": "personal-birthday-call",
+    "input": "call mom for her birthday",
+    "expect": { "category": "Personal", "priority": "low" }
+  },
+  {
+    "id": "gibberish-defaults-to-other",
+    "input": "asdfghjkl random gibberish",
+    "expect": { "category": "Other", "priority": "low" }
+  },
+  {
+    "id": "finance-insurance-asap",
+    "input": "renew car insurance policy asap",
+    "expect": { "category": "Finance", "priority": "high" }
+  },
+  {
+    "id": "personal-chore-weekend",
+    "input": "clean the garage this weekend",
+    "expect": { "category": "Personal", "priority": "low" }
+  }
+]
